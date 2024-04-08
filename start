@@ -194,10 +194,23 @@ generate() {
         dead "No su binary."
       else
         echo -e "Backing up current pif.json file and copying new one..."
-        su -c mv /data/adb/pif.json /data/adb/bak.pif.json
-        su -c cp "$LOCAL"pif.json /data/adb/pif.json
+
+        # Check if /data/adb/modules/playintegrityfix/ exists
+        if [ ! -d "/data/adb/modules/playintegrityfix" ]; then
+          # Not found. Probably using chiteroman's PlayIntegrityFix
+          su -c mv /data/adb/pif.json /data/adb/bak.pif.json
+          su -c cp "$LOCAL"pif.json /data/adb/pif.json
+        else
+          # Using osm0sis's PlayIntegrityFork
+          su -c mv /data/adb/modules/playintegrityfix/custom.pif.json /data/adb/modules/playintegrityfix/custom.pif.json.bak
+          su -c cp "$LOCAL"pif.json /data/adb/modules/playintegrityfix/custom.pif.json
+
+          # Kill GMS service to test fingerprint
+          su -c killall com.google.android.gms
+        fi
+
         echo "!!! Make sure to kill GMS service to test your fingerprint. !!!"
-        echo -e "Copy and paste this command: su -c killall com.google.android.gms.unstable\n"
+        echo -e "Copy and paste this command: su -c killall com.google.android.gms\n"
       fi
     fi
     echo "Done!"
