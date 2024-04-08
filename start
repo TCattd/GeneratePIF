@@ -195,8 +195,6 @@ generate() {
       else
         echo -e "Backing up current pif.json file and copying new one..."
 
-        su
-
         # Check if /data/adb/modules/playintegrityfix/module.prop exists
         if [ -f "/data/adb/modules/playintegrityfix/module.prop" ]; then
           # Using osm0sis's PlayIntegrityFork
@@ -213,7 +211,9 @@ generate() {
           su -c cp "$LOCAL"pif.json /data/adb/pif.json
         fi
 
-        echo "!!! Make sure to kill GMS service to test your fingerprint. !!!"
+        echo -e "Fingerprint installed."
+
+        echo "!!! Make sure to kill GMS service to test your fingerprint, or reboot your device !!!"
         echo -e "Copy and paste this command: su -c killall com.google.android.gms\n"
       fi
     fi
