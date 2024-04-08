@@ -196,17 +196,19 @@ generate() {
         echo -e "Backing up current pif.json file and copying new one..."
 
         # Check if /data/adb/modules/playintegrityfix/module.prop exists
-        if [ ! -e "/data/adb/modules/playintegrityfix/module.prop" ]; then
-          # Not found. Probably using chiteroman's PlayIntegrityFix
-          su -c mv /data/adb/pif.json /data/adb/bak.pif.json
-          su -c cp "$LOCAL"pif.json /data/adb/pif.json
-        else
+        if [ -e "/data/adb/modules/playintegrityfix/module.prop" ]; then
           # Using osm0sis's PlayIntegrityFork
+          echo -e "Using osm0sis's PlayIntegrityFork module."
+          echo -e "Placing pif as custom.pif.json..."
           su -c mv /data/adb/modules/playintegrityfix/custom.pif.json /data/adb/modules/playintegrityfix/custom.pif.json.bak
           su -c cp "$LOCAL"pif.json /data/adb/modules/playintegrityfix/custom.pif.json
-
-          # Kill GMS service to test fingerprint
           su -c killall com.google.android.gms
+        else
+          # Not found. Probably using chiteroman's PlayIntegrityFix
+          echo -e "Using chiteroman's PlayIntegrityFix module."
+          echo -e "Placing pif as pif.json..."
+          su -c mv /data/adb/pif.json /data/adb/pif.json.bak
+          su -c cp "$LOCAL"pif.json /data/adb/pif.json
         fi
 
         echo "!!! Make sure to kill GMS service to test your fingerprint. !!!"
