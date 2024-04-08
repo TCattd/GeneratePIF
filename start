@@ -35,7 +35,7 @@ megamind() {
 # Main pif file generator function
 generate() {
   item() { echo -e "\n- $@"; }
-  die() { 
+  die() {
     echo -e "\n\n! $@"
     if $short || $manual; then
       exit 1
@@ -167,7 +167,7 @@ generate() {
       FORCE_BASIC_ATTESTATION="true"
       LIST="$LIST FORCE_BASIC_ATTESTATION"
     fi;
-    
+
 
     if [ -f "$LOCAL"pif.$FORMAT ]; then
       item "Removing existing custom pif.$FORMAT ...";
@@ -194,10 +194,23 @@ generate() {
         dead "No su binary."
       else
         echo -e "Backing up current pif.json file and copying new one..."
-        su -c mv /data/adb/pif.json /data/adb/bak.pif.json
-        su -c cp "$LOCAL"pif.json /data/adb/pif.json
+
+        # Check if /data/adb/modules/playintegrityfix/ exists
+        if [ ! -d "/data/adb/modules/playintegrityfix" ]; then
+          # Not found. Probably using chiteroman's PlayIntegrityFix
+          su -c mv /data/adb/pif.json /data/adb/bak.pif.json
+          su -c cp "$LOCAL"pif.json /data/adb/pif.json
+        else
+          # Using osm0sis's PlayIntegrityFork
+          su -c mv /data/adb/modules/playintegrityfix/custom.pif.json /data/adb/modules/playintegrityfix/custom.pif.json.bak
+          su -c cp "$LOCAL"pif.json /data/adb/modules/playintegrityfix/custom.pif.json
+
+          # Kill GMS service to test fingerprint
+          su -c killall com.google.android.gms
+        fi
+
         echo "!!! Make sure to kill GMS service to test your fingerprint. !!!"
-        echo -e "Copy and paste this command: su -c killall com.google.android.gms.unstable\n"
+        echo -e "Copy and paste this command: su -c killall com.google.android.gms\n"
       fi
     fi
     echo "Done!"
@@ -234,7 +247,7 @@ generate() {
       echo "Not a number!"
       exit 1
     fi
-    
+
   }
 
   if $manual; then
@@ -261,7 +274,7 @@ clone_repo() {
 
     echo -e "\n# Try to get build.prop from vendor dirs"
     echo
-    git checkout "$br" -- vendor/build.prop 
+    git checkout "$br" -- vendor/build.prop
     git checkout "$br" -- system/vendor/build.prop
 
     rename
@@ -319,7 +332,7 @@ clone_repo() {
     megamind "No arguments"
     exit 1
   fi
-  
+
   # Check for proper URLs
   if [ "$url" = ""  ]; then
     if $file; then
@@ -427,7 +440,7 @@ while getopts 'm:sf:h' OPT; do
       fi
       help="true"
       flag="$OPT"
-      
+
       ;;
     *)
       flag="$OPT"
