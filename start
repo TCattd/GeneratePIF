@@ -195,8 +195,10 @@ generate() {
       else
         echo -e "Backing up current pif.json file and copying new one..."
 
+        su
+
         # Check if /data/adb/modules/playintegrityfix/module.prop exists
-        if [ -e "/data/adb/modules/playintegrityfix/module.prop" ] && $short; then
+        if [ -f "/data/adb/modules/playintegrityfix/module.prop" ]; then
           # Using osm0sis's PlayIntegrityFork
           echo -e "Using osm0sis's PlayIntegrityFork module."
           echo -e "Placing pif as custom.pif.json..."
