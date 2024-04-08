@@ -195,8 +195,8 @@ generate() {
       else
         echo -e "Backing up current pif.json file and copying new one..."
 
-        # Check if /data/adb/modules/playintegrityfix/ exists
-        if [ ! -d "/data/adb/modules/playintegrityfix" ]; then
+        # Check if /data/adb/modules/playintegrityfix/module.prop exists
+        if [ ! -d "/data/adb/modules/playintegrityfix/module.prop" ]; then
           # Not found. Probably using chiteroman's PlayIntegrityFix
           su -c mv /data/adb/pif.json /data/adb/bak.pif.json
           su -c cp "$LOCAL"pif.json /data/adb/pif.json
